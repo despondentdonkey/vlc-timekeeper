@@ -13,9 +13,10 @@ function activate()
   local input = vlc.object.input()
   if input then
     local uri = vlc.strings.decode_uri(vlc.input.item():uri()) -- Format: file:///dir1/dir2/file.ext
+    local localFileName = string.sub(uri, (uri:match'^.*()/') + 1) -- Finds the last occurrence of '/' and retrieves everything past that point
     local filePath = string.gsub(uri, "file:///", "")          -- Format: dir1/dir2/file.ext
     local directory = string.gsub(filePath, "/[^/]*$", "")     -- Format: dir1/dir2         Remove last / and everything after it to leave the directory.
-    local file = io.open(directory .. "/" .. vlc.input.item():name() .. ".txt", "r")
+    local file = io.open(directory .. "/" .. localFileName .. ".txt", "r")
 
     if (file == nil) then
       vlc.msg.err("No log file to load.")
@@ -27,5 +28,5 @@ function activate()
 
     vlc.var.set(input, "time", elapsedTime-5) -- We go back 5 seconds to add more context.
   end
-  deactivate()
+  vlc.deactivate()
 end

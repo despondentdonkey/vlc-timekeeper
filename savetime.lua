@@ -25,12 +25,13 @@ function activate()
     end
 
     local uri = vlc.strings.decode_uri(vlc.input.item():uri()) -- Format: file:///dir1/dir2/file.ext
+    local localFileName = string.sub(uri, (uri:match'^.*()/') + 1) -- Finds the last occurrence of '/' and retrieves everything past that point
     local filePath = string.gsub(uri, "file:///", "")          -- Format: dir1/dir2/file.ext
     local directory = string.gsub(filePath, "/[^/]*$", "")     -- Format: dir1/dir2         Remove last / and everything after it to leave the directory.
 
-    io.output(directory .. "/" .. vlc.input.item():name() .. ".txt")
+    io.output(directory .. "/" .. localFileName .. ".txt")
     io.write(elapsed .. "\n" .. minutes .. ":" .. seconds)
     io.close()
   end
-  deactivate()
+  vlc.deactivate()
 end
